@@ -1,0 +1,18 @@
+{
+  "name": "dlp-file-redaction",
+  "version": "1.0.0",
+  "description": "redacts file contents according to settings",
+  "main": "redactions.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brian Kaufman",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/dlp": "^3.0.3",
+    "JSONStream": "^1.3.5",
+    "event-stream": "^4.0.1",
+    "fs": "0.0.1-security",
+    "jsonstream": "^1.0.3"
+  }
+}
