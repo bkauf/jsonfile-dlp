@@ -82,7 +82,7 @@ module.exports = {
             
             stream.write(JSON.stringify(chat) + ",\n");
           
-            console.log(new Date().toISOString());
+            
             stream.end();
          resolve(response.item.value);
             

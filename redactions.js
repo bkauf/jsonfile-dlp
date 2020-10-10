@@ -4,47 +4,47 @@ const helper = require('./redaction_api')
 
 // Import other required libraries
 const fs = require('fs');
-
-JSONStream = require('JSONStream'),
-es = require('event-stream');
+const mime = require('mime');
 
 const inputFile = './test.json';
 const outputFile ='./output.json';
-var stream = fs.createReadStream(inputFile, 'utf-8');
-var buf = '';
+var byteSize = 10000000;//10 MB
+//var readStream = fs.createReadStream(filepath, 'utf8');
 // Instantiates a client
 
 
-var getStream = function () {
-  var jsonData = inputFile,
-      stream = fs.createReadStream(jsonData, { encoding: 'utf8' }),
-      parser = JSONStream.parse(['transcripts',true]);
-  return stream.pipe(parser);
-};
-
-getStream()
-  .pipe(es.mapSync(function (data) {
-    processChat(data)
-
-     // console.log(data);
-  }));
-
-function processChat(chat){// pass off chat to DLP and file write
-//  chat += "}";
- // chat = JSON.parse(chat);
-   Promise.all(helper.make_API_call(chat,outputFile))
-    .then(results => {
-       // console.log(results);
-       return;
-    })
-    .catch(err => {
-      console.log(err)
-        // Handle the error.
-    });
-
+ async function inspectFile() {
+  // Construct file data to inspect
+  /*const fileTypeConstant =
+    ['image/jpeg', 'image/bmp', 'image/png', 'image/svg'].indexOf(
+      mime.getType(filepath)
+    ) + 1;*/
     
-    
-    
+    fs.readFile(inputFile , (err, fileContent) => {
+      if( err ) {
+      } else {
+        var data = JSON.parse(fileContent);
+        var transcriptsAry = data['transcripts'];
 
+        Promise.all(transcriptsAry.map(chat => helper.make_API_call(chat,outputFile)))
+        .then(results => {
+           // console.log(results);
+        })
+        .catch(err => {
+            console.log('Error:'+chat.transcript_id, err)
+        });
+
+
+           // dlpStr = (helper.make_API_call(chat.content));
+
+     // }); //end foreach 
+      }  
+    });//end stream
+  }
+
+inspectFile();
+
+function processChat(chat){
+  
 }
 
