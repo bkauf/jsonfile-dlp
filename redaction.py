@@ -11,11 +11,7 @@ dlp_client = google.cloud.dlp_v2.DlpServiceClient.from_service_account_file(key_
 # Instantiate a client.
 #dlp_client = google.cloud.dlp_v2.DlpServiceClient()
 
-# The string to inspect
-content = "Robert Frost"
 
-# Construct the item to inspect.
-item = {"value": content}
 
 # The info types to search for in the content. Required.
 info_types = [{"name": "PERSON_NAME"}]
