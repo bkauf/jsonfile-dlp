@@ -1,4 +1,5 @@
 import ijson
+import json
 #from google.cloud import dlp_v2
 # Import the client library
 import google.cloud.dlp
@@ -39,16 +40,27 @@ parent = f"projects/bkauf-sandbox"
 
 
 
-#f = open('./test.json')
-#objects = ijson.items(f, 'transcripts')
-#chatlist = (o for o in objects)
-chatlist = ijson.parse(open('./input.json', 'r'))
+chatlist = ijson.parse(open('./test2.json', 'r'))
 for prefix, event, value in chatlist:
-    if event in ['string', 'float']:
+    #print(event)
+    if event in ['string', 'number', 'start_map', 'end_map']:
+        #print(prefix+":"+str(value))
+        #print(value)
+
+        if prefix == 'transcripts.item.transcript_id':
+            label = 'transcript_id'
+            print(value)
+            data = f'"{label}": "{value}",'
+        if prefix == 'transcripts.item.actor':
+            label = 'actor'
+            data = f'"{label}": "{value}",'
+      
         if prefix == 'transcripts.item.content':
-            print(prefix+':'+str(value))
+            #content= value
             # Call the API.
             # Construct the `item`.
+            label = 'content'
+            data = f'"{label}": "{value}",'
             item = {"value": value}
             response = dlp_client.inspect_content(
                 request={"parent": parent, "inspect_config": inspect_config, "item": item}
@@ -66,5 +78,21 @@ for prefix, event, value in chatlist:
                     likelihood = finding.likelihood.name
                     print("Likelihood: {}".format(likelihood))
                     print(response)
-            else:
-                print("No findings.")
+                    print(prefix+':'+str(value))
+            #else:
+                #print("No findings.")
+        if prefix == 'transcripts.item.position':
+            label = 'poistion'
+            data = f'"{label}": "{value}"'
+        if event == 'start_map':
+            data = '{'
+        if event == 'end_map':
+            data = '},'
+        print(data)
+    
+        # Open a file with access mode 'a'
+        file_object = open('output.json', 'a')
+        # Append 'hello' at the end of file
+        file_object.write(data+'\n')
+        # Close the file
+        file_object.close()
