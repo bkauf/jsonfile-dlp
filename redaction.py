@@ -55,9 +55,7 @@ deidentify_config = {
 # Convert the project id into a full resource id.
 parent = f"projects/bkauf-sandbox"
 
-
-
-chatlist = ijson.parse(open('./test2.json', 'r'))
+chatlist = ijson.parse(open('./test.json', 'r'))
 for prefix, event, value in chatlist:
     #print(event)
     if event in ['string', 'number', 'start_map', 'end_map']:
