@@ -1,12 +1,12 @@
 import ijson
+import sys
 #import json
 #from google.cloud import dlp_v2
 # Import the client library
 import google.cloud.dlp
 
-
 key_path = './sa-token.json'
-inputfile = 'chat.logab'
+inputfile = sys.argv[1]
 outputfile = inputfile+'-output.json'
 
 
