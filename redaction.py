@@ -1,11 +1,13 @@
 import ijson
-import json
+#import json
 #from google.cloud import dlp_v2
 # Import the client library
 import google.cloud.dlp
 
 
 key_path = './sa-token.json'
+inputfile = 'chat.logab'
+outputfile = inputfile+'-output.json'
 
 
 dlp_client = google.cloud.dlp_v2.DlpServiceClient.from_service_account_file(key_path)
@@ -55,7 +57,7 @@ deidentify_config = {
 # Convert the project id into a full resource id.
 parent = f"projects/bkauf-sandbox"
 
-chatlist = ijson.parse(open('./test.json', 'r'))
+chatlist = ijson.parse(open(inputfile , 'r'))
 for prefix, event, value in chatlist:
     #print(event)
     if event in ['string', 'number', 'start_map', 'end_map']:
@@ -119,7 +121,7 @@ for prefix, event, value in chatlist:
             data = '},'
         
         # Open a file with access mode 'a'
-        file_object = open('output.json', 'a')
+        file_object = open(outputfile, 'a')
         # Append 'hello' at the end of file
         file_object.write(data+'\n')
         # Close the file
