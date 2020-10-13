@@ -113,8 +113,8 @@ for prefix, event, value in chatlist:
             #else:
                 #print("No findings.")
         if prefix == 'transcripts.item.position':
-            label = 'poistion'
-            data = f'"{label}": "{value}"'
+            label = 'position'
+            data = f'"{label}": {value}'
         if event == 'start_map':
             data = '{'
         if event == 'end_map':
