@@ -49,7 +49,6 @@ for prefix, event, value in chatlist:
             data = f'"{label}": "{value}",'
       
         if prefix == 'transcripts.item.content':
-            #content= value
             # Call the API.
             # Construct the `item`.
             
@@ -64,7 +63,6 @@ for prefix, event, value in chatlist:
                 }
             )
 
-            
             label = 'content'
             data = f'"{label}": "{response.item.value}",'
             # Print out the results if there are matches
