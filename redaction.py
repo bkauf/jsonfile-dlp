@@ -13,7 +13,7 @@ outputfile = inputfile+'-output.json'
 dlp_client = google.cloud.dlp_v2.DlpServiceClient.from_service_account_file(key_path)
 
 info_types = ["PERSON_NAME"]
-min_likelihood = google.cloud.dlp_v2.Likelihood.UNLIKELY
+min_likelihood = google.cloud.dlp_v2.Likelihood.LIKELIHOOD_UNSPECIFIED
 inspect_config = {
     "info_types": [{"name": info_type} for info_type in info_types],
     "min_likelihood": min_likelihood
