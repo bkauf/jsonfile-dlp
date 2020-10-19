@@ -7,18 +7,16 @@ import google.cloud.dlp
 
 key_path = './sa-token.json'
 inputfile = sys.argv[1]
-outputfile = inputfile+'-output.json'
+outputfile = inputfile+'-output.csv'
 
 
-dlp_client = google.cloud.dlp_v2.DlpServiceClient.from_service_account_file(key_path)
 # Instantiate a client.
-#dlp_client = google.cloud.dlp_v2.DlpServiceClient()
-
+dlp_client = google.cloud.dlp_v2.DlpServiceClient.from_service_account_file(key_path)
 
 
 # The info types to search for in the content. Required.
 info_types = [{"name": "PERSON_NAME"}]
-#info_types = ["PERSON_NAME"]
+inspect_template_name = "projects/bkauf-sandbox/locations/global/inspectTemplates/sample-aggressive1"
 # The minimum likelihood to constitute a match. Optional.
 min_likelihood = google.cloud.dlp_v2.Likelihood.LIKELIHOOD_UNSPECIFIED
 
@@ -31,13 +29,11 @@ include_quote = True
 # Construct the configuration dictionary. Keys which are None may
 # optionally be omitted entirely.
 inspect_config = {
-    "info_types": info_types,
+    #"info_types": info_types,
     "min_likelihood": min_likelihood,
     "include_quote": include_quote,
     "limits": {"max_findings_per_request": max_findings},
 }
-
-
 
 # Convert the project id into a full resource id.
 parent = f"projects/bkauf-sandbox"
@@ -51,7 +47,7 @@ for prefix, event, value in chatlist:
 
         if prefix == 'transcripts.item.transcript_id':
             label = 'transcript_id'
-            print(value)
+            #print(value)
             data = f'"{label}": "{value}",'
         if prefix == 'transcripts.item.actor':
             label = 'actor'
@@ -64,26 +60,31 @@ for prefix, event, value in chatlist:
             
             item = {"value": value}
             response = dlp_client.inspect_content(
-                request={"parent": parent, "inspect_config": inspect_config, "item": item}
+                request={"parent": parent, "inspect_config": inspect_config, "item": item, "inspect_template_name" : inspect_template_name}
             )
-            
-
             
             # Print out the results.
             if response.result.findings:
                 for finding in response.result.findings:
-                    try:
-                       print("Quote: {}".format(finding.quote))
-                    except AttributeError:
-                        pass
-                    print("Info type: {}".format(finding.info_type.name))
+                    #try:
+                       #print("Quote: {}".format(finding.quote))
+                    #except AttributeError:
+                        #pass
+                    #print("Info type: {}".format(finding.info_type.name))
                     # Convert likelihood value to string respresentation.
                     likelihood = finding.likelihood.name
-                    print("Likelihood: {}".format(likelihood))
-                    print(response)
-                    print(prefix+':'+str(value))
-            else:
-                print("No findings.")
+                    redactionStr= finding.quote
+                    #print("Likelihood: {}".format(likelihood))
+                    print(redactionStr)
+                    #print(prefix+':'+str(value))
+                       # Open a file with access mode 'a'
+                    file_object = open(outputfile, 'a')
+                    # Append 'hello' at the end of file
+                    file_object.write(redactionStr+','+'\n')
+                    # Close the file
+                    file_object.close()
+            #else:
+                #print("No findings.")
         if prefix == 'transcripts.item.position':
             label = 'position'
             data = f'"{label}": {value}'
@@ -92,9 +93,4 @@ for prefix, event, value in chatlist:
         if event == 'end_map':
             data = '},'
         
-        # Open a file with access mode 'a'
-        file_object = open(outputfile, 'a')
-        # Append 'hello' at the end of file
-        file_object.write(data+'\n')
-        # Close the file
-        file_object.close()
+     

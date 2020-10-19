@@ -8,15 +8,20 @@ import google.cloud.dlp
 key_path = './sa-token.json'
 inputfile = sys.argv[1]
 outputfile = inputfile+'-output.json'
+catches = 'catches.csv'
 
 
 dlp_client = google.cloud.dlp_v2.DlpServiceClient.from_service_account_file(key_path)
 
-info_types = ["PERSON_NAME"]
+#info_types = ["PERSON_NAME"]
+
+deidentify_template_name = "projects/bkauf-sandbox/locations/global/deidentifyTemplates/sample-aggressive1"
+inspect_template_name = "projects/bkauf-sandbox/locations/global/inspectTemplates/sample-aggressive1"
+
 min_likelihood = google.cloud.dlp_v2.Likelihood.LIKELIHOOD_UNSPECIFIED
 inspect_config = {
-    "info_types": [{"name": info_type} for info_type in info_types],
-    "min_likelihood": min_likelihood
+    #"info_types": [{"name": info_type} for info_type in info_types],
+    #"min_likelihood": min_likelihood
 }
 replacement_str= "PERSON_NAME"
 # Construct deidentify configuration dictionary
@@ -62,8 +67,10 @@ for prefix, event, value in chatlist:
             response = dlp_client.deidentify_content(
                 request={
                     "parent": parent,
-                    "deidentify_config": deidentify_config,
+                    #"deidentify_config": deidentify_config,
+                    "inspect_template_name": inspect_template_name,
                     "inspect_config": inspect_config,
+                    "deidentify_template_name": deidentify_template_name,
                     "item": item,
                 }
             )
@@ -73,7 +80,20 @@ for prefix, event, value in chatlist:
             content = response.item.value
             # Print out the results if there are matches
             if response.overview:
-                print(response.overview.transformation_summaries[0].results)
+                #print(response.overview.transformation_summaries[0].results)
+                print(response)
+                print(transcriptid)
+                #print("before:"+ value)
+                #print("after: "+ content)
+
+                file_object1 = open(catches, 'a')
+                # Append 'hello' at the end of file
+                file_object1.write('before:'+value+',\n')
+                file_object1.write('after:'+content+',\n'
+                )
+
+                # Close the file
+                file_object1.close()
 
         if prefix == 'transcripts.item.position':
             label = 'position'

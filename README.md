@@ -5,3 +5,7 @@
 ```tr -s '[:blank:]' ' ' <file >newfile```
 #### Split file into multiple 100mb smaller ones
 ```split -b 100MB input.json```
+
+#### Run Script in the background
+
+```nohup python3 redaction.py [jsonfile] &``` 
