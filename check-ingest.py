@@ -17,7 +17,7 @@ for prefix, event, value in chatlist:
 
         if prefix == 'transcripts.item.transcript_id':
             label = 'transcript_id'
-            print(value)
+            #print(value)
             data = f'"{label}": "{value}",'
         if prefix == 'transcripts.item.actor':
             label = 'actor'
