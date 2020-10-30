@@ -1,7 +1,5 @@
-import ijson
+
 import sys
-import json
-#from google.cloud import dlp_v2
 # Import the client library
 import google.cloud.dlp
 
@@ -47,9 +45,7 @@ with open(inputfile) as f:
     data = f.read(250000)
     while data !=b"":
     
-        
         item = {"value": data} 
-                
         response = dlp_client.deidentify_content(
             request={
                 "parent": parent,
@@ -71,4 +67,5 @@ with open(inputfile) as f:
         file_object.write(dataDLP)
         # Close the file
         file_object.close()
+        #read next
         data = f.read(250000)
