@@ -4,9 +4,11 @@ import sys
 import google.cloud.dlp
 
 key_path = './sa-token.json'
+# Convert the project id into a full resource id.
+parent = f"projects/bkauf-sandbox"
+
 inputfile = sys.argv[1]
 outputfile = inputfile+'-output.json'
-catches = 'catches.csv'
 
 
 dlp_client = google.cloud.dlp_v2.DlpServiceClient.from_service_account_file(key_path)
@@ -38,8 +40,6 @@ deidentify_config = {
 }
 
 
-# Convert the project id into a full resource id.
-parent = f"projects/bkauf-sandbox"
 
 with open(inputfile) as f:
     data = f.read(250000)
